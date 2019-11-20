@@ -1,0 +1,68 @@
+{
+  "suggest.triggerAfterInsertEnter": false,
+  "eslint.enable": false,
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact"
+  ],
+  "tslint.jsEnable": true,
+  "tslint.autoFixOnSave": true,
+  "tslint.packageManager": "npm",
+  "coc.source.file.ignoreHidden": false,
+  "python.linting.enabled": true,
+  "diagnostic.virtualText": false,
+  "diagnostic.virtualTextPrefix": "| ",
+  "git.enableGutters": true,
+  "git.addGBlameToVirtualText": true,
+  "git.addGBlameToBufferVar": true,
+  "git.virtualTextPrefix": "    | ",
+  "git.addedSign.hlGroup": "GitGutterAdd",
+  "git.changedSign.hlGroup": "GitGutterChange",
+  "git.removedSign.hlGroup": "GitGutterDelete",
+  "git.topRemovedSign.hlGroup": "GitGutterDelete",
+  "git.changeRemovedSign.hlGroup": "GitGutterChangeDelete",
+  "diagnostic-languageserver.linters": {
+    "shellcheck": {
+      "command": "shellcheck",
+      "debounce": 100,
+      "args": ["--format=gcc", "-x", "-"],
+      "offsetLine": 0,
+      "offsetColumn": 0,
+      "sourceName": "shellcheck",
+      "formatLines": 1,
+      "formatPattern": [
+        "^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$", {
+          "line": 1,
+          "column": 2,
+          "message": 4,
+          "security": 3 }
+      ],
+      "securities": { "error": "error", "warning": "warning", "note": "info" }
+    }
+  },
+  "diagnostic-languageserver.filetypes": { "sh": "shellcheck", "vim": "vint" },
+  "explorer.sources": [ {
+      "name": "file",
+      "expand": true
+    }, {
+      "name": "buffer",
+      "expand": true
+    }
+  ],
+  "explorer.icon.enableNerdfont": true,
+  "explorer.file.columns": [
+    "selection",
+    "clip",
+    "diagnosticError",
+    "indent",
+    "icon",
+    "filename",
+    "git",
+    "size",
+    "modified",
+    "readonly"
+  ],
+  "explorer.file.column.git.showIgnored": true,
+  "explorer.file.column.filename.minWidth": 0
+}
