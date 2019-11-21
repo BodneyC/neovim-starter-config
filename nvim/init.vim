@@ -1,8 +1,10 @@
 set nocompatible
 filetype off
 
-let g:python_host_prog='/usr/bin/python2'
-let g:python3_host_prog='/usr/bin/python3'
+let g:python_host_prog = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
+
+"""""""""" Plugins
 
 call plug#begin('~/.local/share/nvim/plugged')
 " Completion
@@ -40,11 +42,13 @@ call plug#begin('~/.local/share/nvim/plugged')
 	Plug 'dylanaraps/wal.vim'
 call plug#end()
 
+"""""""""" General interface options
+
 set nocompatible               " run in vim mode
-set noequalalways
-set hidden
-set expandtab                  " expand tabs into spaces
-set tabstop=4                  " indentation leves of normal tabs
+set noequalalways              " Don't equalize panes on close
+set hidden                     " Allow hidden buffers
+set noexpandtab                " expand tabs into spaces
+set tabstop=2                  " indentation leves of normal tabs
 set softtabstop=0              " indentation level of soft-tabs
 set shiftwidth=0               " how many columns to re-indent with << and >>
 set autoindent                 " auto-indent new lines
@@ -59,47 +63,49 @@ set linebreak                  " only break lines on 'breakat' characters
 set laststatus=2               " Always display
 set mouse=a                    " Enable mouse
 set bs=2                       " fix backspace on some consoles
-set tags^=.git/tags
+set tags^=.git/tags            " Add .git project root tags
 set scrolloff=1                " # lines below cursor always
 set backspace=indent,eol,start " Backspace behaviour
 set matchpairs+=<:>            " use % to jump between pairs
 set autowrite                  " Automatically write when switching buffers
-set ttimeout
-set ttimeoutlen=50
-set splitbelow
-set splitright
-set cul
-set icm=split
-set winblend=16
-set updatetime=200
-set nofoldenable
-set foldmethod=syntax
-set spelllang=en_gb
-set undofile
+set ttimeout                   " Set key press timeout options
+set ttimeoutlen=50             " Timeout in 50 ms
+set splitbelow                 " Default for opening panes
+set splitright                 " Default for opening panes
+set cul                        " Cursorline
+set icm=split                  " Preview substitues
+set winblend=16                " Opacity for floating windows
+set updatetime=200             " How long to wait before writing swap to disk
+set nofoldenable               " Disable folds
+set foldmethod=syntax          " Syntactic folding
+set spelllang=en_gb            " Spelling file language
+set undofile                   " Allow undo file
 set undodir=$HOME/.config/nvim/undo
 set undolevels=10000
 set undoreload=10000
-set termguicolors
-set background=dark
-set laststatus=2
-set signcolumn=yes
+set termguicolors              " RGB colors
+set background=dark            " Background affects other highlights
+set laststatus=2               " Always show status line
+set signcolumn=yes             " Always show sign column
 syntax on                      " turn on syntax highlighting
 
-colo wal
-
-if has("autocmd") " Last position when opening file
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-  \| exe "normal g'\"" | endif
-endif
+colorscheme wal
+set notermguicolors
 
 let mapleader="\<Space>"
 
+"""""""""" Plugin settings
+
 let g:virk_tags_enable = 0
+
 let g:indentLine_showFirstIndentLevel = 1
 let g:indentLine_enabled = 1
+
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 let g:WebDevIconsUnicodeDecorateFolderNodeDefaultSymbol = ''
+
 let g:mundo_right = 1
+
 let g:gutentags_add_default_project_roots = 0 
 let g:gutentags_project_root = ['package.json', '.git', '.virkspace'] 
 let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/') 
@@ -109,16 +115,20 @@ let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
 let g:gutentags_generate_on_empty_buffer = 0 
 let g:gutentags_ctags_extra_args = [ '--tag-relative=yes', '--fields=+ailmnS', ] 
+
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 let g:vista_default_executive = 'coc'
 let g:vista#renderer#icons = { "function": "\uf794", "variable": "\uf71b" }
 let g:vista_executive_for = { 'vim': 'ctags' }
+
 let g:NERDSpaceDelims=1
 let g:NERDDefaultAlign = 'left'
+
 let g:pear_tree_map_special_keys = 0
 let g:pear_tree_smart_openers = 1
 let g:pear_tree_smart_closers = 1
 let g:pear_tree_smart_backspace = 1
+
 let NERDTreeWinSize=25
 let NERDTreeMinimalUI=1
 let NERDTreeDirArrows=1
@@ -126,8 +136,11 @@ let NERDTreeShowBookmarks=0
 let NERDTreeShowHidden=1
 let NERDTreeDirArrowExpandable = "\u00a0"
 let NERDTreeDirArrowCollapsible = "\u00a0"
+let NERDTreeIgnore = ['\.git$', 'node_modules', 'vendor', '\.virkspace']
+
 let $FZF_DEFAULT_OPTS='--layout=reverse --margin=1,3'
-" let NERDTreeIgnore = ['\.git$', 'node_modules', 'vendor', '\.virkspace']
+
+"""""""""" Functions and things
 
 function! s:openNerdTreeIfNotAlreadyOpen()
   if ! (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
@@ -137,15 +150,32 @@ function! s:openNerdTreeIfNotAlreadyOpen()
   endif
 endfunction
 
+" On Vim enter, open NERDTree
+autocmd VimEnter *
+      \   if argc() == 0
+      \ |   setlocal nobuflisted
+      \ |   call s:openNerdTreeIfNotAlreadyOpen()
+      \ |   wincmd w
+      \ |   Startify
+      \ | endif
+autocmd VimEnter *
+      \   if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
+      \ |   call s:openNerdTreeIfNotAlreadyOpen()
+      \ |   Startify
+      \ | endif
+
+" Flog is one of many git plugins, this provides a useful function for this
 function! Flogdiff()
   let first_commit = flog#get_commit_data(line("'<")).short_commit_hash
   let last_commit = flog#get_commit_data(line("'>")).short_commit_hash
   call flog#git('vertical belowright', '!', 'diff ' . first_commit . ' ' . last_commit)
 endfunction
+
 augroup flog
   autocmd FileType floggraph vno gd :<C-U>call Flogdiff()<CR>
 augroup END
 
+" Custom COC format command for visual and normal
 function! s:CocFormat(range, line1, line2) abort
   if a:range == 0
     call CocAction('format')
@@ -157,6 +187,11 @@ function! s:CocFormat(range, line1, line2) abort
   endif
 endfunction
 
+command! -nargs=0 -range -bar CocFormat call s:CocFormat(<range>, <line1>, <line2>)
+vmap <silent> <leader>F  <Plug>(coc-format-selected)
+nmap <silent> <leader>F  <Plug>(coc-format)
+
+" Move between buffers easily
 function! WinMove(k)
   let t:curwin = winnr()
   exec "wincmd " . a:k
@@ -172,6 +207,7 @@ function! WinMove(k)
     exec "wincmd " . a:k
   endif
 endfunction
+
 nnoremap <silent> <C-h> :call WinMove('h')<CR>
 nnoremap <silent> <C-j> :call WinMove('j')<CR>
 nnoremap <silent> <C-k> :call WinMove('k')<CR>
@@ -181,12 +217,14 @@ inoremap <C-j> <Esc><C-j>
 inoremap <C-k> <Esc><C-k>
 inoremap <C-l> <Esc><C-l>
 
+" Open an FZF command avoiding NERDTree
 function! FZFOpen(command_str)
   if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
     exe "normal! \<c-w>\<c-w>"
   endif
   exe 'normal! ' . a:command_str . "\<cr>"
 endfunction
+
 nnoremap <silent> <leader>; :Commands<CR>
 nnoremap <silent> <leader>f :call FZFOpen(":call fzf#vim#files('', fzf#vim#with_preview({}, 'up:70%'))")<CR>
 nnoremap <silent> <leader>r :call FZFOpen(':Rg')<CR>
@@ -194,6 +232,7 @@ nnoremap <silent> <leader>m :call FZFOpen(':Marks')<CR>
 nnoremap <silent> <leader>M :call FZFOpen(':Maps')<CR>
 nnoremap <silent> <leader>i :IndentLinesToggle<CR>
 
+" NERDTree resize to approp. width
 function NERDTreeResize()
   let curWin = winnr()
   NERDTreeFocus
@@ -202,11 +241,14 @@ function NERDTreeResize()
   exec 'vertical resize' maxcol
   exec curWin 'wincmd w'
 endfunction
+
 command! -nargs=0 NERDTreeResize :call NERDTreeResize()
 
+" Use BodneyC's vim-leader-guide
 nnoremap <silent> <leader> :<c-u>LeaderGuide '<Space>'<CR>
 xnoremap <silent> <leader> :<c-u>LeaderGuideVisual '<Space>'<CR>
 
+" Map some insert mode command to match pais plugin
 imap <BS> <Plug>(PearTreeBackspace)
 imap <Esc> <Plug>(PearTreeFinishExpansion)
 imap <Space> <Plug>(PearTreeSpace)
@@ -214,18 +256,23 @@ nmap <silent> <leader>R :RenameWord<CR>
 imap ++ <Plug>(PearTreeJump)
 inoremap jj <Esc>
 
+" Explorer maps
 nnoremap <leader>ce :CocCommand explorer --toggle<CR>
 nnoremap <leader>nt :NERDTreeToggle<CR>
 nnoremap <leader>nr :call NERDTreeResize()<CR>
 
+" ^_ is shorthand for <C-/>, works on selection
 map  <Plug>NERDCommenterToggle
 
+" Append lines quickly
 nnoremap <silent> [<Leader> :<C-u>call append(line('.') - 1, repeat([''], v:count1))<CR>
 nnoremap <silent> ]<Leader> :<C-u>call append(line('.'), repeat([''], v:count1))<CR>
+
+" Move to next/prev diagnostic message
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
-
+" Write/edit/quit better
 nnoremap Q   q
 nnoremap Q!  q!
 command! Wqa wqa
@@ -245,9 +292,11 @@ nnoremap <leader>/ :noh<CR>
 nnoremap <silent> <leader>" :sbn<CR>
 nnoremap <silent> <leader>% :vert sbn<CR>
 
+" Undo/tags window
 nnoremap <silent> <leader>U :MundoToggle<CR>
 nnoremap <silent> <leader>V :Vista!!<CR>
 
+" Some additional COC mappings
 nmap <silent> <leader>gd <Plug>(coc-definition)
 nmap <silent> <leader>gt <Plug>(coc-type-definition)
 nmap <silent> <leader>gi <Plug>(coc-implementation)
@@ -256,7 +305,7 @@ nnoremap <silent> <leader>l :CocList<CR>
 nnoremap <silent> <leader>d :CocList --auto-preview diagnostics<CR>
 nnoremap <silent> <leader>s :CocList commands<CR>
 
-""""""" Pmenu
+" Pmenu, trust me
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
@@ -272,28 +321,26 @@ inoremap <silent><expr> <CR>
       \ pumvisible()
       \   ? "\<C-y>"
       \   : pear_tree#insert_mode#PrepareExpansion()
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-""""""" Formatting
-command! -nargs=0 -range -bar CocFormat call s:CocFormat(<range>, <line1>, <line2>)
-vmap <silent> <leader>F  <Plug>(coc-format-selected)
-nmap <silent> <leader>F  <Plug>(coc-format)
+" Formatting
 nmap <silent>  <C-m> <Plug>(coc-cursors-position)
 xmap <silent>  <C-m> <Plug>(coc-cursors-range)
 nmap <leader>x <Plug>(coc-cursors-operator)
 
-""""""" Highlights
+" Highlights, need PyGTK
 command! RGBPicker :call CocAction('pickColor')<CR>
 command! RGBOptions :call CocAction('colorPresentation')<CR>
 command! -nargs=0 RenameWord CocCommand document.renameCurrentWord
 
-""""""" F-keys
+" F-keys
 nnoremap <F1> :help <C-r><C-w><CR>
 nnoremap <F2> :s//g<Left><Left>
 nnoremap <F3> :%s//g<Left><Left>
 nnoremap <F7> :set spell!<CR>
 inoremap <F7> <esc>:set spell!<CR>a
 
-""""""" Buffers
+" Buffers
 nnoremap <Tab>    :bn<CR>
 nnoremap <S-Tab>  :bp<CR>
 nnoremap <silent> <leader>bd :bn<CR>:bd#<CR>
@@ -302,12 +349,12 @@ nnoremap <silent> <leader>bD :%bd\|e#\|bn\|bd<CR>
 nnoremap <silent> <leader>be :enew<CR>
 nnoremap <silent> <leader>b# <C-^>
 
-""""""" Open file/links
+" Open file/links
 nnoremap <silent> <leader>ox :call netrw#BrowseX(expand('<cfile>'),netrw#CheckIfRemote())<CR>
 vnoremap <silent> <leader>ox :<C-u>call netrw#BrowseXVis()<CR>
 nnoremap <silent> <leader>of :e <cfile><CR>
 
-""""""" Moving lines up and down
+" Moving lines up and down
 xnoremap <S-up>   :m-2<CR>gv=gv
 xnoremap <S-down> :m'>+<CR>gv=gv
 nnoremap <S-up>   :m-2<CR>
@@ -315,31 +362,33 @@ nnoremap <S-down> :m+<CR>
 inoremap <S-up>   <Esc>:m-2<CR>
 inoremap <S-down> <Esc>:m+<CR>
 
-""""""" Indenting
+" Indenting
 xnoremap <       <gv
 xnoremap >       >gv
 xnoremap <S-Tab> <gv
 xnoremap <Tab>   >gv
 
+" Pesky windows line endings...
 command! -nargs=0 ConvLineEndings %s///g
+
+""""""" AuGroups
 
 augroup vimrc_nerdtree
   autocmd!
+  " Turn off signcolumn
   autocmd FileType nerdtree setlocal signcolumn=no
   autocmd StdinReadPre * let s:std_in=1
+  " Close NERDTree on quit
   autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 augroup END
 
+" Indentlines disable for startify
 augroup vimrc_startify
   autocmd!
   autocmd FileType startify IndentLinesDisable
 augroup END
 
-augroup vimrc_language_other
-  autocmd!
-  autocmd BufEnter,BufWinEnter,WinEnter Jenkinsfile,Dockerfile set ts=4 | set sw=4
-augroup END
-
+" Change indent of file
 function! ChangeIndent(n)
 	set noet
 	%retab!
@@ -350,6 +399,7 @@ function! ChangeIndent(n)
 endfunction
 command! -nargs=1 ChangeIndent call ChangeIndent(<f-args>)
 
+" Set indent width (virtually)
 function! SetIndent(n)
   let &l:ts=a:n
   let &l:sw=a:n
@@ -358,22 +408,16 @@ function! SetIndent(n)
 endfunction
 command! -nargs=1 SetIndent call SetIndent(<f-args>)
 
-function! GetHighlightTerm(group, ele)
-  let higroup = execute('hi ' . a:group)
-  return matchstr(higroup, a:ele.'=\zs\S*')
-endfunction
-command! -nargs=+ GetHighlightTerm call GetHighlightTerm(<f-args>)
-
+" Update all the things, may change your pwd
 function! UpdateAll()
-  let l:cwd = getcwd()
   PlugUpgrade
   PlugUpdate
   CocUpdateSync
   UpdateRemotePlugins
-  exec 'cd ' . l:cwd
 endfunction
 command! -nargs=0 UpdateAll call UpdateAll()
 
+" Assures these extension to COC are added
 call coc#add_extension(
       \ 'coc-explorer',
       \ 'coc-snippets',
@@ -394,9 +438,12 @@ call coc#add_extension(
       \ 'coc-highlight',
       \ 'coc-terminal')
 
+" Highlight words matching current
 autocmd CursorHold * silent call CocActionAsync('highlight')
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
+"""""""" Terminal Stuff
+
+" Continuously spawn right terminals
 function! ChooseTerm(termname)
   let pane = bufwinnr(a:termname)
   if pane == -1
@@ -414,7 +461,6 @@ endfunction
 
 nnoremap <silent> <leader>' :call ChooseTerm("term-bottom")<CR>
 
-tnoremap <C-q> <C-\><C-n>
 tnoremap <LeftRelease> <Nop>
 
 augroup vimrc_feature_terminal
@@ -423,15 +469,9 @@ augroup vimrc_feature_terminal
   autocmd BufEnter,BufWinEnter,WinEnter * if &buftype == 'terminal' | :startinsert | endif
 augroup END
 
-autocmd VimEnter *
-      \   if argc() == 0
-      \ |   setlocal nobuflisted
-      \ |   wincmd w
-      \ |   Startify
-      \ | endif
-autocmd VimEnter *
-      \   if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
-      \ |   call s:openNerdTreeIfNotAlreadyOpen()
-      \ |   Startify
-      \ | endif
+" Remember the last position when opening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+  \| exe "normal g'\"" | endif
+endif
 
