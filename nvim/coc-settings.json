@@ -2,10 +2,7 @@
   "suggest.triggerAfterInsertEnter": false,
   "eslint.enable": false,
   "eslint.autoFixOnSave": true,
-  "eslint.filetypes": [
-    "javascript",
-    "javascriptreact"
-  ],
+  "eslint.filetypes": ["javascript", "javascriptreact"],
   "tslint.jsEnable": true,
   "tslint.autoFixOnSave": true,
   "tslint.packageManager": "npm",
@@ -22,6 +19,16 @@
   "git.removedSign.hlGroup": "GitGutterDelete",
   "git.topRemovedSign.hlGroup": "GitGutterDelete",
   "git.changeRemovedSign.hlGroup": "GitGutterChangeDelete",
+  "languageserver": {
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "filetypes": ["go"],
+      "initializationOptions": {
+        "lintTool": "golint"
+      }
+    }
+  },
   "diagnostic-languageserver.linters": {
     "shellcheck": {
       "command": "shellcheck",
@@ -32,20 +39,24 @@
       "sourceName": "shellcheck",
       "formatLines": 1,
       "formatPattern": [
-        "^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$", {
+        "^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+        {
           "line": 1,
           "column": 2,
           "message": 4,
-          "security": 3 }
+          "security": 3
+        }
       ],
       "securities": { "error": "error", "warning": "warning", "note": "info" }
     }
   },
   "diagnostic-languageserver.filetypes": { "sh": "shellcheck", "vim": "vint" },
-  "explorer.sources": [ {
+  "explorer.sources": [
+    {
       "name": "file",
       "expand": true
-    }, {
+    },
+    {
       "name": "buffer",
       "expand": true
     }

@@ -21,15 +21,17 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'Yggdroot/indentLine'
   Plug 'itchyny/lightline.vim'
   Plug 'ryanoasis/vim-devicons'
-  Plug 'https://gitlab.com/BodneyC/VirkSpaces', { 'branch': 'master' }
+  Plug 'BodneyC/VirkSpaces', { 'branch': 'master' }
 " Language
   Plug 'justinmk/vim-syntax-extra'
+	Plug 'tpope/vim-fugitive'
   Plug 'oguzbilgic/vim-gdiff'
   Plug 'rbong/vim-flog'
   Plug 'junegunn/gv.vim'
 " Text manipulation
+	Plug 'terryma/vim-multiple-cursors'
   Plug 'junegunn/vim-easy-align'
-  Plug 'tmsvg/pear-tree'
+  Plug 'tmsvg/pear-tree' " or...
   " Plug 'jiangmiao/auto-pairs'
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-repeat' " Better . functionality
@@ -155,7 +157,6 @@ autocmd VimEnter *
       \   if argc() == 0
       \ |   setlocal nobuflisted
       \ |   call s:openNerdTreeIfNotAlreadyOpen()
-      \ |   wincmd w
       \ |   Startify
       \ | endif
 autocmd VimEnter *
@@ -420,6 +421,8 @@ command! -nargs=0 UpdateAll call UpdateAll()
 " Assures these extension to COC are added
 call coc#add_extension(
       \ 'coc-explorer',
+			\ 'coc-git',
+			\ 'coc-python',
       \ 'coc-snippets',
       \ 'coc-tag',
       \ 'coc-syntax',
@@ -447,21 +450,25 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 function! ChooseTerm(termname)
   let pane = bufwinnr(a:termname)
   if pane == -1
-    split
+    vsplit
+		wincmd J
     resize 10
     terminal
     exe "f " a:termname
+		set hidden
     startinsert
   else
     exe pane . "wincmd w"
     vsplit
     terminal
+		set hidden
   endif
 endfunction
 
 nnoremap <silent> <leader>' :call ChooseTerm("term-bottom")<CR>
 
 tnoremap <LeftRelease> <Nop>
+tnoremap <Esc> <C-\><C-n>
 
 augroup vimrc_feature_terminal
   autocmd!
