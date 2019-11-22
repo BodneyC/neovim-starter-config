@@ -17,8 +17,8 @@ hash gem && {
 }
 
 hash go && {
-	go get github.com/golang/tools/gopls
-	go get golang.org/x/golang/golint
+	go get github.com/x/tools/gopls
+	go get golang.org/x/lint/golint
 }
 
 nvim +UpdateAll

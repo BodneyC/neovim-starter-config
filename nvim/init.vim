@@ -10,7 +10,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Completion
   Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
   Plug 'sheerun/vim-polyglot'
-  Plug 'tpope/vim-liquid'
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
   Plug 'junegunn/fzf.vim'
 " Interface
