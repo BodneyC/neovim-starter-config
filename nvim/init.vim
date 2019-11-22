@@ -24,12 +24,12 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'BodneyC/VirkSpaces', { 'branch': 'master' }
 " Language
   Plug 'justinmk/vim-syntax-extra'
-	Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-fugitive'
   Plug 'oguzbilgic/vim-gdiff'
   Plug 'rbong/vim-flog'
   Plug 'junegunn/gv.vim'
 " Text manipulation
-	Plug 'terryma/vim-multiple-cursors'
+  Plug 'terryma/vim-multiple-cursors'
   Plug 'junegunn/vim-easy-align'
   Plug 'tmsvg/pear-tree' " or...
   " Plug 'jiangmiao/auto-pairs'
@@ -41,7 +41,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'liuchengxu/vista.vim'
   Plug 'bodneyc/vim-leader-guide'
 " Colorschemes
-	Plug 'dylanaraps/wal.vim'
+  Plug 'dylanaraps/wal.vim'
 call plug#end()
 
 """""""""" General interface options
@@ -49,7 +49,7 @@ call plug#end()
 set nocompatible               " run in vim mode
 set noequalalways              " Don't equalize panes on close
 set hidden                     " Allow hidden buffers
-set noexpandtab                " expand tabs into spaces
+set expandtab                  " expand tabs into spaces
 set tabstop=2                  " indentation leves of normal tabs
 set softtabstop=0              " indentation level of soft-tabs
 set shiftwidth=0               " how many columns to re-indent with << and >>
@@ -391,11 +391,11 @@ augroup END
 
 " Change indent of file
 function! ChangeIndent(n)
-	set noet
-	%retab!
+  set noet
+  %retab!
   let &l:ts=a:n
   set expandtab
-	%retab!
+  %retab!
   call SetIndent(a:n)
 endfunction
 command! -nargs=1 ChangeIndent call ChangeIndent(<f-args>)
@@ -421,8 +421,8 @@ command! -nargs=0 UpdateAll call UpdateAll()
 " Assures these extension to COC are added
 call coc#add_extension(
       \ 'coc-explorer',
-			\ 'coc-git',
-			\ 'coc-python',
+      \ 'coc-git',
+      \ 'coc-python',
       \ 'coc-snippets',
       \ 'coc-tag',
       \ 'coc-syntax',
@@ -450,18 +450,22 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 function! ChooseTerm(termname)
   let pane = bufwinnr(a:termname)
   if pane == -1
+    let bufnr = bufnr(a:termname)
+    if bufnr != -1
+      exec "bd!" . bufnr
+    endif
     vsplit
-		wincmd J
+    wincmd J
     resize 10
     terminal
     exe "f " a:termname
-		set hidden
+    set hidden
     startinsert
   else
     exe pane . "wincmd w"
     vsplit
     terminal
-		set hidden
+    set hidden
   endif
 endfunction
 
