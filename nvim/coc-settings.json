@@ -19,16 +19,6 @@
   "git.removedSign.hlGroup": "GitGutterDelete",
   "git.topRemovedSign.hlGroup": "GitGutterDelete",
   "git.changeRemovedSign.hlGroup": "GitGutterChangeDelete",
-  "languageserver": {
-    "golang": {
-      "command": "gopls",
-      "rootPatterns": ["go.mod"],
-      "filetypes": ["go"],
-      "initializationOptions": {
-        "lintTool": "golint"
-      }
-    }
-  },
   "diagnostic-languageserver.linters": {
     "shellcheck": {
       "command": "shellcheck",
@@ -75,5 +65,5 @@
     "readonly"
   ],
   "explorer.file.column.git.showIgnored": true,
-  "explorer.file.column.filename.minWidth": 0
+  "explorer.file.column.filename.width": 1
 }

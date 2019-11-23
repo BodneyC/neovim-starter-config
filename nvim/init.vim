@@ -143,7 +143,7 @@ let $FZF_DEFAULT_OPTS='--layout=reverse --margin=1,3'
 
 """""""""" Functions and things
 
-function! s:openNerdTreeIfNotAlreadyOpen()
+function! s:OpenNerdTreeIfNotAlreadyOpen()
   if ! (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
     NERDTreeToggle
     setlocal nobuflisted
@@ -155,12 +155,12 @@ endfunction
 autocmd VimEnter *
       \   if argc() == 0
       \ |   setlocal nobuflisted
-      \ |   call s:openNerdTreeIfNotAlreadyOpen()
+      \ |   call s:OpenNerdTreeIfNotAlreadyOpen()
       \ |   Startify
       \ | endif
 autocmd VimEnter *
       \   if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in")
-      \ |   call s:openNerdTreeIfNotAlreadyOpen()
+      \ |   call s:OpenNerdTreeIfNotAlreadyOpen()
       \ |   Startify
       \ | endif
 
@@ -170,10 +170,6 @@ function! Flogdiff()
   let last_commit = flog#get_commit_data(line("'>")).short_commit_hash
   call flog#git('vertical belowright', '!', 'diff ' . first_commit . ' ' . last_commit)
 endfunction
-
-augroup flog
-  autocmd FileType floggraph vno gd :<C-U>call Flogdiff()<CR>
-augroup END
 
 " Custom COC format command for visual and normal
 function! s:CocFormat(range, line1, line2) abort
@@ -242,7 +238,7 @@ function NERDTreeResize()
   exec curWin 'wincmd w'
 endfunction
 
-command! -nargs=0 NERDTreeResize :call NERDTreeResize()
+command! -nargs=0 NERDTreeResize call NERDTreeResize()
 
 " Use BodneyC's vim-leader-guide
 nnoremap <silent> <leader> :<c-u>LeaderGuide '<Space>'<CR>
@@ -324,13 +320,14 @@ inoremap <silent><expr> <CR>
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " Formatting
-nmap <silent>  <C-m> <Plug>(coc-cursors-position)
-xmap <silent>  <C-m> <Plug>(coc-cursors-range)
+nmap <silent> <C-m> <Plug>(coc-cursors-position)
+xmap <silent> <C-m> <Plug>(coc-cursors-range)
+nmap <silent> <leader>p <Plug>(coc-type-definition)
 nmap <leader>x <Plug>(coc-cursors-operator)
 
 " Highlights, need PyGTK
-command! RGBPicker :call CocAction('pickColor')<CR>
-command! RGBOptions :call CocAction('colorPresentation')<CR>
+command! RGBPicker call CocAction('pickColor')<CR>
+command! RGBOptions call CocAction('colorPresentation')<CR>
 command! -nargs=0 RenameWord CocCommand document.renameCurrentWord
 
 " F-keys
@@ -475,7 +472,7 @@ tnoremap <Esc> <C-\><C-n>
 
 augroup vimrc_feature_terminal
   autocmd!
-  autocmd TermOpen,TermEnter * setlocal nospell nobuflisted nonu nornu tw=0 wh=1
+  autocmd TermOpen,TermEnter * setlocal nospell signcolumn=no nobuflisted nonu nornu tw=0 wh=1
   autocmd BufEnter,BufWinEnter,WinEnter * if &buftype == 'terminal' | :startinsert | endif
 augroup END
 
