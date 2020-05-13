@@ -75,7 +75,7 @@ set splitbelow                 " Default for opening panes
 set splitright                 " Default for opening panes
 set cul                        " Cursorline
 set icm=split                  " Preview substitues
-set winblend=16                " Opacity for floating windows
+set winblend=10                " Opacity for floating windows
 set updatetime=200             " How long to wait before writing swap to disk
 set nofoldenable               " Disable folds
 set foldmethod=syntax          " Syntactic folding
@@ -92,6 +92,7 @@ syntax on                      " turn on syntax highlighting
 
 colorscheme wal
 set notermguicolors
+set winblend=0                " Opacity for floating windows
 
 let mapleader="\<Space>"
 
@@ -101,6 +102,7 @@ let g:virk_tags_enable = 0
 
 let g:indentLine_showFirstIndentLevel = 1
 let g:indentLine_enabled = 1
+let g:indentLine_fileTypeExclude = [ "markdown" ]
 
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 let g:WebDevIconsUnicodeDecorateFolderNodeDefaultSymbol = ''
@@ -213,6 +215,29 @@ inoremap <C-j> <Esc><C-j>
 inoremap <C-k> <Esc><C-k>
 inoremap <C-l> <Esc><C-l>
 
+" FZF
+let s:terminal_divisor = 0.9
+function! FloatingCentred(...)
+  let height_divisor = get(a:, 1, s:terminal_divisor)
+  let width_divisor = get(a:, 2, s:terminal_divisor)
+  let height = float2nr(&lines * height_divisor)
+  let width = float2nr(&columns * width_divisor)
+  let col = float2nr((&columns - width) / 2)
+  let row = float2nr((&lines - height) / 2)
+  let opts = {
+        \   'relative': 'editor',
+        \   'row': row,
+        \   'col': col,
+        \   'width': width,
+        \   'height': height,
+        \   'style': 'minimal'
+        \ }
+  let s:cur_float_win = nvim_create_buf(v:false, v:true)
+  call nvim_open_win(s:cur_float_win, v:true, opts)
+  setlocal winhl=Normal:NormalFloat
+endfunction
+
+
 " Open an FZF command avoiding NERDTree
 function! FZFOpen(command_str)
   if (expand('%') =~# 'NERD_tree' && winnr('$') > 1)
@@ -220,6 +245,9 @@ function! FZFOpen(command_str)
   endif
   exe 'normal! ' . a:command_str . "\<cr>"
 endfunction
+
+let $FZF_DEFAULT_OPTS='--layout=reverse --margin=1,1'
+let g:fzf_layout = { 'window': 'call FloatingCentred()' }
 
 nnoremap <silent> <leader>; :Commands<CR>
 nnoremap <silent> <leader>f :call FZFOpen(":call fzf#vim#files('', fzf#vim#with_preview({}, 'up:70%'))")<CR>
@@ -349,7 +377,6 @@ nnoremap <silent> <leader>b# <C-^>
 " Open file/links
 nnoremap <silent> <leader>ox :call netrw#BrowseX(expand('<cfile>'),netrw#CheckIfRemote())<CR>
 vnoremap <silent> <leader>ox :<C-u>call netrw#BrowseXVis()<CR>
-nnoremap <silent> <leader>of :e <cfile><CR>
 
 " Moving lines up and down
 xnoremap <S-up>   :m-2<CR>gv=gv
@@ -387,11 +414,7 @@ augroup END
 
 " Change indent of file
 function! ChangeIndent(n)
-  set noet
-  %retab!
-  let &l:ts=a:n
-  set expandtab
-  %retab!
+  set noet | %retab! | let &l:ts=a:n | set expandtab | %retab!
   call SetIndent(a:n)
 endfunction
 command! -nargs=1 ChangeIndent call ChangeIndent(<f-args>)
@@ -400,19 +423,11 @@ command! -nargs=1 ChangeIndent call ChangeIndent(<f-args>)
 function! SetIndent(n)
   let &l:ts=a:n
   let &l:sw=a:n
-  IndentLinesDisable
-  IndentLinesEnable
+  if exists(':IndentLinesReset')
+    silent IndentLinesReset
+  endif
 endfunction
 command! -nargs=1 SetIndent call SetIndent(<f-args>)
-
-" Update all the things, may change your pwd
-function! UpdateAll()
-  PlugUpgrade
-  PlugUpdate
-  CocUpdateSync
-  UpdateRemotePlugins
-endfunction
-command! -nargs=0 UpdateAll call UpdateAll()
 
 " Assures these extension to COC are added
 call coc#add_extension(
@@ -472,13 +487,12 @@ tnoremap <Esc> <C-\><C-n>
 
 augroup vimrc_feature_terminal
   autocmd!
+  autocmd TermOpen,TermEnter,BufNew,BufEnter term://* startinsert
   autocmd TermOpen,TermEnter * setlocal nospell signcolumn=no nobuflisted nonu nornu tw=0 wh=1
-  autocmd BufEnter,BufWinEnter,WinEnter * if &buftype == 'terminal' | :startinsert | endif
 augroup END
 
 " Remember the last position when opening a file
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-  \| exe "normal g'\"" | endif
+        \| exe "normal g'\"" | endif
 endif
-
