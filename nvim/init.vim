@@ -30,11 +30,11 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Text manipulation
   Plug 'terryma/vim-multiple-cursors'
   Plug 'junegunn/vim-easy-align'
-  Plug 'tmsvg/pear-tree' " or...
+  Plug 'tmsvg/pear-tree'
   " Plug 'jiangmiao/auto-pairs'
   Plug 'scrooloose/nerdcommenter'
-  Plug 'tpope/vim-repeat' " Better . functionality
-  Plug 'tpope/vim-surround' " Surround with ys<w>
+  Plug 'tpope/vim-repeat'
+  Plug 'tpope/vim-surround'
   Plug 'ludovicchabant/vim-gutentags'
   Plug 'simnalamburt/vim-mundo'
   Plug 'liuchengxu/vista.vim'
@@ -313,8 +313,11 @@ nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>* :%s/\<<C-r><C-w>\>//g<left><left>
 nnoremap <leader>/ :noh<CR>
+
 nnoremap <silent> <leader>" :sbn<CR>
 nnoremap <silent> <leader>% :vert sbn<CR>
+nnoremap <silent> <leader>\| :sbn<CR>
+nnoremap <silent> <leader>- :vert sbn<CR>
 
 " Undo/tags window
 nnoremap <silent> <leader>U :MundoToggle<CR>
@@ -432,6 +435,7 @@ command! -nargs=1 SetIndent call SetIndent(<f-args>)
 " Assures these extension to COC are added
 call coc#add_extension(
       \ 'coc-explorer',
+      \ 'coc-marketplace',
       \ 'coc-git',
       \ 'coc-python',
       \ 'coc-snippets',
@@ -440,7 +444,8 @@ call coc#add_extension(
       \ 'coc-lists',
       \ 'coc-yank',
       \ 'coc-diagnostic',
-      \ 'coc-docker',
+      \ 'coc-docker')
+call coc#add_extension(
       \ 'coc-sh',
       \ 'coc-json', 
       \ 'coc-tsserver', 
