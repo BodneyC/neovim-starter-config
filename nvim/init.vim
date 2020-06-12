@@ -215,6 +215,8 @@ inoremap <C-j> <Esc><C-j>
 inoremap <C-k> <Esc><C-k>
 inoremap <C-l> <Esc><C-l>
 
+vnoremap <LeftRelease> "*y<LeftRelease>
+
 " FZF
 let s:terminal_divisor = 0.9
 function! FloatingCentred(...)
