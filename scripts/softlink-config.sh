@@ -38,6 +38,6 @@ fi
 
 mkdir -p ~/.config/nvim
 
-for f in nvim/{init.vim,coc-settings.json}; do
+for f in nvim/{init.vim,coc-settings.json,autoload}; do
 	_process "$(realpath "$f")" "$(basename "$f")" "$HOME/.config/$f"
 done

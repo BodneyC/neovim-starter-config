@@ -25,4 +25,5 @@ hash go && {
 }
 
 nvim +PlugInstall +qall
+nvim +AddCocExtensions +qall
 nvim +UpdateRemotePlugins

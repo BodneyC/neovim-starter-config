@@ -25,7 +25,6 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'justinmk/vim-syntax-extra'
   Plug 'tpope/vim-fugitive'
   Plug 'oguzbilgic/vim-gdiff'
-  Plug 'rbong/vim-flog'
   Plug 'junegunn/gv.vim'
 " Text manipulation
   Plug 'terryma/vim-multiple-cursors'
@@ -165,13 +164,6 @@ autocmd VimEnter *
       \ |   call s:OpenNerdTreeIfNotAlreadyOpen()
       \ |   Startify
       \ | endif
-
-" Flog is one of many git plugins, this provides a useful function for this
-function! Flogdiff()
-  let first_commit = flog#get_commit_data(line("'<")).short_commit_hash
-  let last_commit = flog#get_commit_data(line("'>")).short_commit_hash
-  call flog#git('vertical belowright', '!', 'diff ' . first_commit . ' ' . last_commit)
-endfunction
 
 " Custom COC format command for visual and normal
 function! s:CocFormat(range, line1, line2) abort
@@ -434,8 +426,7 @@ function! SetIndent(n)
 endfunction
 command! -nargs=1 SetIndent call SetIndent(<f-args>)
 
-" Assures these extension to COC are added
-call coc#add_extension(
+let s:coc_extensions = [
       \ 'coc-explorer',
       \ 'coc-marketplace',
       \ 'coc-git',
@@ -446,8 +437,7 @@ call coc#add_extension(
       \ 'coc-lists',
       \ 'coc-yank',
       \ 'coc-diagnostic',
-      \ 'coc-docker')
-call coc#add_extension(
+      \ 'coc-docker',
       \ 'coc-sh',
       \ 'coc-json', 
       \ 'coc-tsserver', 
@@ -457,7 +447,18 @@ call coc#add_extension(
       \ 'coc-emmet', 
       \ 'coc-css',
       \ 'coc-highlight',
-      \ 'coc-terminal')
+      \ 'coc-terminal'
+      \ ]
+
+function! s:AddCocExtensions()
+  for r in range(0, len(s:coc_extensions), 15)
+    let ext_lst = s:coc_extensions[r:r + 15]
+    if len(ext_lst)
+      exe 'CocInstall ' . join(ext_lst, ' ')
+    endif
+  endfor
+endfunction
+command! -nargs=0 AddCocExtensions call s:AddCocExtensions()
 
 " Highlight words matching current
 autocmd CursorHold * silent call CocActionAsync('highlight')
